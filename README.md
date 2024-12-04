@@ -35,6 +35,23 @@ Animal: 0.009
 Vehicle: 0.008
 embedding: (2048,)
 ```
+## After this, can convert to ONNX by
+```
+CUDA_VISIBLE_DEVICES=0 python3 pytorch/torch_to_onnx.py \
+    --model_type=$MODEL_TYPE \
+    --checkpoint_path=$CHECKPOINT_PATH \
+    --cuda
+```
+
+## For ONNX inferencing (AudioTagging only)
+```
+CHECKPOINT_PATH="Cnn14_mAP=0.431.onnx"
+CUDA_VISIBLE_DEVICES=0 python3 pytorch/inference_onnx.py audio_tagging \
+    --onnx_path=$CHECKPOINT_PATH \
+    --audio_path="resources/R9_ZSCveAHg_7s.wav" \
+    --cuda
+```
+
 
 If users would like to use 16 kHz model for inference, just do:
 ```
