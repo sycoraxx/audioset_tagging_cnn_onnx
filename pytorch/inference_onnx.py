@@ -164,7 +164,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.mode == 'audio_tagging':
-        onnx_experiment(args)
+        onnx_audio_tagging(args)
 
     elif args.mode == 'sound_event_detection':
         sound_event_detection(args)
