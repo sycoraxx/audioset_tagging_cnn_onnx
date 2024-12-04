@@ -57,7 +57,8 @@ def convert_onnx(args):
     input_names=['input'],     # Input names
     output_names=['output'],   # Output names
     dynamic_axes={             # Enable variable-length axes (optional)
-        'input': {0: 'batch_size'}, 
+        'input': {0: 'batch_size',
+                  1: 'time_steps'}, 
         'output': {0: 'batch_size'}
     }
 )
