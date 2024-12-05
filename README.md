@@ -43,11 +43,17 @@ CUDA_VISIBLE_DEVICES=0 python3 pytorch/torch_to_onnx.py \
     --cuda
 ```
 
+## Optimize the ONNX file by
+```
+pip install onnxsim
+python -m onnxsim "Cnn14_mAP=0.431.onnx" "optimized_Cnn14_mAP=0.431.onnx"
+```
+
 ## For ONNX inferencing (AudioTagging only)
 ```
-CHECKPOINT_PATH="Cnn14_mAP=0.431.onnx"
+ONNX_PATH="optimized_Cnn14_mAP=0.431.onnx"
 CUDA_VISIBLE_DEVICES=0 python3 pytorch/inference_onnx.py audio_tagging \
-    --onnx_path=$CHECKPOINT_PATH \
+    --onnx_path=$ONNX_PATH \
     --audio_path="resources/R9_ZSCveAHg_7s.wav" \
     --cuda
 ```
