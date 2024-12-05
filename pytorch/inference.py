@@ -11,6 +11,7 @@ from utilities import create_folder, get_filename
 from models import *
 from pytorch_utils import move_data_to_device
 import config
+import time
 
 
 def audio_tagging(args):
@@ -54,6 +55,8 @@ def audio_tagging(args):
 
     waveform = waveform[None, :]    # (1, audio_length)
     waveform = move_data_to_device(waveform, device)
+
+    print(waveform.shape) # see shape
 
     # Forward
     with torch.no_grad():
@@ -198,10 +201,14 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.mode == 'audio_tagging':
+        start_time = time.time()
         audio_tagging(args)
+        end_time = time.time()
 
     elif args.mode == 'sound_event_detection':
         sound_event_detection(args)
 
     else:
         raise Exception('Error argument!')
+    
+    print(f"Inference Time: {end_time - start_time:.6f} seconds")

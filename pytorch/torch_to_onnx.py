@@ -37,13 +37,13 @@ def convert_onnx(args):
     checkpoint = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(checkpoint['model'])
 
+    model = model.to(device)
+
     model.eval()
     size = (1, 224000)
 
-    dummy_tensor = torch.randn(size)
+    dummy_tensor = torch.randn(size).to(device)
 
-    if 'cuda' in str(device):
-        dummy_tensor = dummy_tensor.cuda()
 
     onnx_file_path = os.path.splitext(checkpoint_path)[0] + ".onnx"
 
@@ -52,7 +52,7 @@ def convert_onnx(args):
     dummy_tensor,               # Dummy input tensor
     onnx_file_path,            # Output file name
     export_params=True,        # Store parameters (weights) inside the model
-    opset_version=9,          # ONNX opset version (11 is widely supported)
+    opset_version=15,          # ONNX opset version (11 is widely supported)
     do_constant_folding=True,  # Optimize constant folding for inference
     input_names=['input'],     # Input names
     output_names=['output'],   # Output names

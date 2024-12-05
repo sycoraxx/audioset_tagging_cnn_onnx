@@ -14,6 +14,7 @@ import config
 import torch.onnx
 import onnxruntime
 import onnx
+import time
 
 def to_numpy(tensor):
     return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
@@ -28,9 +29,7 @@ def onnx_audio_tagging(args):
     classes_num = config.classes_num
     labels = config.labels
 
-    onnx_model = onnx.load(onnx_path)
-    onnx.checker.check_model(onnx_model)
-    print("ONNX model is valid!")
+    onnx.checker.check_model(onnx.load(onnx_path))
 
     # Load audio
     (waveform, _) = librosa.core.load(audio_path, sr=sample_rate, mono=True)
@@ -51,13 +50,17 @@ def onnx_audio_tagging(args):
 
     onnxruntime_outputs = ort_session.run(None, {input_name: numpy_input})
     # print(len(onnxruntime_outputs))
-    # print(onnxruntime_outputs[0].shape)
 
     clipwise_output = onnxruntime_outputs[0].flatten()
     sorted_indexes = np.argsort(clipwise_output)[::-1]
     
     for k in range(10):
         print('{}: {:.3f}'.format(np.array(labels)[sorted_indexes[k]], clipwise_output[sorted_indexes[k]]))
+
+    print("Size of onnxruntime_outputs = {}".format(len(onnxruntime_outputs)))
+    if len(onnxruntime_outputs) > 1:
+        embedding = onnxruntime_outputs[1].flatten()
+        print('embedding: {}'.format(embedding.shape))
 
     return clipwise_output, labels
 
@@ -164,10 +167,14 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.mode == 'audio_tagging':
+        start_time = time.time()
         onnx_audio_tagging(args)
+        end_time = time.time()
 
     elif args.mode == 'sound_event_detection':
         sound_event_detection(args)
 
     else:
         raise Exception('Error argument!')
+    
+    print(f"Inference Time: {end_time - start_time:.6f} seconds")

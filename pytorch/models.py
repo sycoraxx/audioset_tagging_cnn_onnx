@@ -14,7 +14,8 @@ def init_layer(layer):
     if hasattr(layer, 'bias'):
         if layer.bias is not None:
             layer.bias.data.fill_(0.)
-            
+
+
     
 def init_bn(bn):
     """Initialize a Batchnorm layer. """
@@ -148,6 +149,11 @@ class Cnn14(nn.Module):
         ref = 1.0
         amin = 1e-10
         top_db = None
+
+        # Spectrogram extractor
+        # self.spectrogram_extractor = Spectrogram(n_fft=window_size, hop_length=hop_size, 
+        #    win_length=window_size, window=window, center=center, pad_mode=pad_mode, 
+        #    freeze_parameters=True)
 
         # Spectrogram extractor
         self.spectrogram_extractor = Spectrogram(n_fft=window_size, hop_length=hop_size, 
